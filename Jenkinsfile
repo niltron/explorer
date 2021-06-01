@@ -9,15 +9,26 @@ pipeline {
     CI = 'true'
   }
   stages {
-    stage('Build') {
+    stage('Install') {
       steps {
         sh 'npm install'
+      }
+    }
+    stage('Build') {
+      steps {
+        sh 'npm run build'
       }
     }
     stage('Test') {
       steps {
         sh 'npm run test:cov'
       }
+    }
+  }
+  post {
+    always {
+      archiveArtifacts artifacts: 'build/*', fingerprint: true
+      junit 'coverage/clover.xml'
     }
   }
 }
